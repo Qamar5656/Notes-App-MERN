@@ -40,7 +40,9 @@ const Dashboard = () => {
         <Navbar selectedItem={selectedItem} />
 
         {/* Table Data */}
-        <Table />
+        <Table
+          filter={selectedItem === "Completed" ? "status=completed" : ""}
+        />
 
         {/* Footer */}
         <Footer />
