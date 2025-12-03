@@ -105,7 +105,11 @@ const SignIn = () => {
                 </span>
               </div>
 
-              <Button caption={isSubmitting ? "Signing In..." : "Sign In"} />
+              <Button
+                caption={isSubmitting ? "Signing In..." : "Sign In"}
+                // onClick={handleSubmit}
+                type="submit"
+              />
             </Form>
           )}
         </Formik>
