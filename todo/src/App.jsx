@@ -26,9 +26,9 @@ const App = () => {
         draggable
         pauseOnHover
       />
-      {/* Public Routes */}
       <BrowserRouter>
         <Routes>
+          {/* Public Routes */}
           <Route
             path="/signin"
             element={
@@ -45,7 +45,6 @@ const App = () => {
               </PublicRoute>
             }
           />
-
           <Route
             path="/verify-otp"
             element={
@@ -54,7 +53,6 @@ const App = () => {
               </PublicRoute>
             }
           />
-
           <Route
             path="/forget-password"
             element={
@@ -63,7 +61,6 @@ const App = () => {
               </PublicRoute>
             }
           />
-
           <Route
             path="/reset-password"
             element={
@@ -72,8 +69,7 @@ const App = () => {
               </PublicRoute>
             }
           />
-
-          {/* Protected Routes */}
+          {/* Protected Dashboard Routes */}
           <Route
             path="/dashboard"
             element={
@@ -83,6 +79,32 @@ const App = () => {
             }
           />
 
+          <Route
+            path="/dashboard/priority/:name"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/dashboard/notebook/:name"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/dashboard/:section"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
           {/* Redirect any unknown route to SignIn */}
           <Route path="*" element={<Navigate to="/signin" replace />} />
         </Routes>
