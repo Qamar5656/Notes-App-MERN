@@ -2,38 +2,48 @@ import React from "react";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import InputField from "../Common/InputeField";
-import axios from "axios";
-import { toast } from "react-toastify"; // import toast
+import { toast } from "react-toastify";
+import apiClient from "../../api/apiClient";
 
 const AddTodo = ({ onTodoAdded }) => {
   const initialValues = {
-    title: "",
+    task: "",
     description: "",
     priority: "medium",
   };
 
   const validationSchema = Yup.object({
-    title: Yup.string().required("Title is required"),
+    task: Yup.string().required("Task is required"),
     description: Yup.string().required("Description is required"),
     priority: Yup.string().oneOf(["low", "medium", "high"]).required(),
   });
 
   const handleSubmit = async (values, { resetForm, setSubmitting }) => {
+    setSubmitting(true);
     try {
-      const token = localStorage.getItem("accessToken");
-      const response = await axios.post("/api/todos/create-todo", values, {
-        headers: { Authorization: `Bearer ${token}` },
+      const response = await apiClient.post("/create-todo", {
+        task: values.task,
+        description: values.description,
+        priority: values.priority,
       });
 
       if (response.data.success) {
-        toast.success(response.data.message); // show success toast
+        toast.success(response.data.message);
         resetForm();
         if (onTodoAdded) onTodoAdded();
       } else {
-        toast.error(response.data.message); // show error toast
+        toast.error(response.data.message);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Server error");
+      if (error.response?.status === 401) {
+        // Session expired or token invalid
+        toast.error("Session expired. Please login again.");
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        window.location.href = "/login";
+      } else {
+        toast.error(error.response?.data?.message || "Server error");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -50,11 +60,7 @@ const AddTodo = ({ onTodoAdded }) => {
       >
         {({ isSubmitting }) => (
           <Form className="space-y-4">
-            <InputField
-              name="title"
-              label="Title"
-              placeholder="Enter task title"
-            />
+            <InputField name="task" label="Task" placeholder="Enter task" />
             <InputField
               name="description"
               label="Description"
@@ -76,7 +82,7 @@ const AddTodo = ({ onTodoAdded }) => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+              className="bg-gray-800 w-full text-white px-4 py-3 rounded-lg hover:bg-gray-600 transition cursor-pointer"
             >
               {isSubmitting ? "Adding..." : "Add Task"}
             </button>
