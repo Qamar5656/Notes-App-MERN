@@ -232,7 +232,11 @@ const SignUp = () => {
                 </span>
               </div>
 
-              <Button caption={isSubmitting ? "Submitting..." : "Sign Up"} />
+              <Button
+                caption={isSubmitting ? "Submitting..." : "Sign Up"}
+                type="submits"
+                // onClick={handleSubmit}
+              />
             </Form>
           )}
         </Formik>
