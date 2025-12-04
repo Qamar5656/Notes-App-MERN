@@ -3,8 +3,6 @@ import {
   FaArrowLeft,
   FaArrowDown,
   FaArrowUp,
-  FaFile,
-  FaFolder,
   FaUser,
   FaFlag,
   FaTasks,
@@ -14,10 +12,9 @@ import {
 import { FiCheckSquare, FiLogOut, FiMenu } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
-const Sidebar = ({ selectedItem, handleLogout, stats }) => {
+const Sidebar = ({ selectedItem, setSelectedItem, handleLogout, stats }) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(true);
-  const [openNotebook, setOpenNotebook] = useState(false);
   const [openPriority, setOpenPriority] = useState(false);
   const [user, setUser] = useState(null);
 
@@ -32,18 +29,13 @@ const Sidebar = ({ selectedItem, handleLogout, stats }) => {
   // Function to handle menu item clicks
   const handleItemClick = (itemName) => {
     if (itemName === "Tasks") navigate("/dashboard/tasks");
-    if (itemName === "Completed") navigate("/dashboard/completed");
-    if (itemName === "Trash") navigate("/dashboard/trash");
-
-    if (itemName.startsWith("Notebook > ")) {
-      const notebook = itemName.replace("Notebook > ", "");
-      navigate(`/dashboard/notebook/${notebook}`);
-    }
-
     if (itemName.startsWith("Priority: ")) {
       const priority = itemName.replace("Priority: ", "").toLowerCase();
       navigate(`/dashboard/priority/${priority}`);
     }
+    if (itemName === "Completed") navigate("/dashboard/completed");
+    if (itemName === "Trash") navigate("/dashboard/trash");
+    setSelectedItem(itemName);
   };
 
   // Render menu button with optional badge
