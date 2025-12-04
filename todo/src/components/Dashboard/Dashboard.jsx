@@ -1,92 +1,100 @@
-// components/Dashboard/Dashboard.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useTodos } from "../../hooks/useTodos";
 import Navbar from "./Navbar/Navbar";
-import Footer from "./Footer/Footer";
 import Sidebar from "./Sidebar/Sidebar";
+import Footer from "./Footer/Footer";
 import Table from "./Table/Table";
+import { useTodos } from "../../hooks/useTodos";
 
 const Dashboard = () => {
-  const { section, name } = useParams();
+  const {
+    todos,
+    stats,
+    loading,
+    addTodoOptimistic,
+    completeTask,
+    deleteTask,
+    restoreTask,
+    permanentDeleteTask,
+    updateTask,
+    setFilter,
+  } = useTodos();
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredTodos, setFilteredTodos] = useState([]);
+  const [prefillTodo, setPrefillTodo] = useState(null);
+
+  const { section } = useParams();
   const navigate = useNavigate();
-
-  const [selectedItem, setSelectedItem] = useState("Tasks");
-  const [filter, setFilter] = useState("");
   const [user, setUser] = useState(null);
+  const [selectedItem, setSelectedItem] = useState("Tasks");
 
-  // Get todos data and stats
-  const { stats, refreshTodos } = useTodos(filter || "");
-
-  // Load logged-in user
+  // Load user from localStorage
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (stored) setUser(JSON.parse(stored));
   }, []);
 
+  // Set filter when sidebar item changes
   useEffect(() => {
-    console.log("Dashboard params:", { section, name });
-    console.log("Full URL:", window.location.pathname);
+    setFilter(selectedItem);
+  }, [selectedItem, setFilter]);
 
-    if (!section) {
-      setSelectedItem("Tasks");
-      setFilter("Tasks");
-      navigate("/dashboard/tasks");
-      return;
-    }
+  // Filter todos based on search
+  useEffect(() => {
+    if (!todos) return;
 
-    if (section === "tasks") {
-      setSelectedItem("Tasks");
-      setFilter("Tasks");
-    } else if (section === "completed") {
-      setSelectedItem("Completed");
-      setFilter("Completed");
-    } else if (section === "trash") {
-      setSelectedItem("Trash");
-      setFilter("Trash");
-    } else if (section === "priority" && name) {
-      // Handle priority route
-      const priorityName =
-        name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-      setSelectedItem(`Priority: ${priorityName}`);
-      setFilter(`Priority: ${priorityName}`);
-    } else if (section === "notebook" && name) {
-      setSelectedItem(`Notebook > ${name}`);
-      setFilter(`Notebook > ${name}`);
-    } else {
-      // Fallback for any other section
-      setSelectedItem(section);
-      setFilter(section);
-    }
-  }, [section, name, navigate]);
+    setFilteredTodos(
+      todos.filter((todo) => {
+        const task = todo.task || "";
+        const desc = todo.description || "";
+        const query = searchQuery.toLowerCase();
+        return (
+          task.toLowerCase().includes(query) ||
+          desc.toLowerCase().includes(query)
+        );
+      })
+    );
+  }, [searchQuery, todos]);
 
-  if (!user) return <p>Loading user...</p>;
+  const handleTaskAdded = (todo) => addTodoOptimistic(todo);
 
-  // Logout handler
   const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("user");
+    localStorage.clear();
     navigate("/signin");
   };
 
-  // Handle task added - refresh data
-  const handleTaskAdded = () => {
-    refreshTodos();
-  };
+  if (!user) return <p>Loading...</p>;
 
   return (
     <div className="flex h-screen bg-gray-50">
       <Sidebar
         selectedItem={selectedItem}
-        handleLogout={handleLogout}
         stats={stats}
+        setSelectedItem={setSelectedItem}
+        handleLogout={handleLogout}
       />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Navbar selectedItem={selectedItem} onTaskAdded={handleTaskAdded} />
+        <Navbar
+          selectedItem={selectedItem}
+          addTodoOptimistic={handleTaskAdded}
+          updateTask={updateTask}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          editTodo={prefillTodo}
+          setEditTodo={setPrefillTodo}
+        />
 
-        <Table filter={filter} />
+        <Table
+          todos={filteredTodos}
+          loading={loading}
+          deleteTask={deleteTask}
+          restoreTask={restoreTask}
+          permanentDeleteTask={permanentDeleteTask}
+          completeTask={completeTask}
+          onEdit={(todo) => setPrefillTodo(todo)}
+        />
 
         <Footer />
       </div>
