@@ -47,7 +47,7 @@ apiClient.interceptors.response.use(
         });
         localStorage.setItem("accessToken", res.data.accessToken);
         originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`;
-        return apiClient(originalRequest); // Retry original request
+        return apiClient(originalRequest);
       } catch (refreshError) {
         console.error(
           "Token refresh failed:",
