@@ -1,10 +1,13 @@
 // services/todoService.js
 import apiClient from "../api/apiClient";
 
-// Fetch todos with query parameters
-export const fetchTodos = async (query = "") => {
-  const res = await apiClient.get(`/todos${query ? `?${query}` : ""}`);
-  return res.data.todos;
+export const fetchTodos = async (params = {}) => {
+  // Convert object to query string
+  const queryString = new URLSearchParams(params).toString();
+  const res = await apiClient.get(
+    `/todos${queryString ? `?${queryString}` : ""}`
+  );
+  return res.data; // return full data: { todos, filters }
 };
 
 // Fetch todo stats for sidebar counters
@@ -16,8 +19,23 @@ export const fetchTodoStats = async () => {
 // Create todo
 export const createTodo = (data) => apiClient.post("/create-todo", data);
 
-// Update todo
-export const updateTodo = (id, data) => apiClient.put(`/todos/${id}`, data);
+// Update Service
+export const updateTodo = async (id, data) => {
+  try {
+    const response = await apiClient.put(`/todos/${id}`, data);
+
+    return response;
+  } catch (error) {
+    console.error("Update service error:", error);
+    throw error;
+  }
+};
+
+//search todo
+export const searchTodo = async (query) => {
+  const res = await apiClient.get(`/todos${query ? `?search=${query}` : ""}`);
+  return res.data.todos;
+};
 
 // Delete todo (soft delete to trash)
 export const deleteTodo = (id) => apiClient.delete(`/todos/${id}`);
