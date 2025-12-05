@@ -53,7 +53,8 @@ const Table = ({
     });
   }, [todos]);
 
-  // Handlers
+  // Useoptimistic hook implementation
+  //Delete Function
   const handleDelete = async (id) => {
     updateOptimistic({ type: "delete", id });
     try {
@@ -64,6 +65,7 @@ const Table = ({
     }
   };
 
+  //Restore Function
   const handleRestore = async (id) => {
     updateOptimistic({ type: "restore", id });
     try {
@@ -75,15 +77,15 @@ const Table = ({
     }
   };
 
-  const handleComplete = async (id) => {
-    updateOptimistic({ type: "update", id, data: { status: "completed" } });
-    try {
-      await completeTask(id);
-    } catch {
-      toast.error("Failed to complete task");
-      updateOptimistic({ type: "rollback" });
-    }
-  };
+  // const handleComplete = async (id) => {
+  //   updateOptimistic({ type: "update", id, data: { status: "completed" } });
+  //   try {
+  //     await completeTask(id);
+  //   } catch {
+  //     toast.error("Failed to complete task");
+  //     updateOptimistic({ type: "rollback" });
+  //   }
+  // };
 
   // Filter + Search (only on current page)
   const filteredTodos = optimisticTodos.filter((todo) => {
@@ -140,6 +142,7 @@ const Table = ({
         <div className="overflow-x-auto">
           <table className="min-w-full border border-gray-200">
             <thead className="bg-gray-800 text-white">
+              {/* Table Heading Row */}
               <tr>
                 <th className="py-3 px-4 text-left">Title</th>
                 <th className="py-3 px-4 text-left">Description</th>
@@ -150,6 +153,7 @@ const Table = ({
               </tr>
             </thead>
             <tbody>
+              {/* Tasks Data Fetching */}
               {paginatedTodos.length > 0 ? (
                 paginatedTodos.map((todo, index) => (
                   <tr
@@ -160,13 +164,14 @@ const Table = ({
                   >
                     <td className="py-7 px-4 font-medium">{todo.task}</td>
                     <td className="py-7 px-4 text-gray-600">
+                      {/* Long Task description tooltip */}
                       <span title={todo.description}>
                         {todo.description.length > 50
                           ? todo.description.slice(0, 50) + "..."
                           : todo.description}
                       </span>
                     </td>
-
+                    {/* Priority of task  */}
                     <td className="py-7 px-4">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-medium ${
@@ -180,6 +185,7 @@ const Table = ({
                         {todo.priority}
                       </span>
                     </td>
+                    {/* Todo Status */}
                     <td className="py-3 px-4">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-medium ${
@@ -193,21 +199,25 @@ const Table = ({
                         {todo.status}
                       </span>
                     </td>
+                    {/* Date Record  */}
                     <td className="py-3 px-4 text-sm text-gray-600">
                       {new Date(todo.createdAt).toLocaleDateString()}
                     </td>
+
+                    {/* Buttons Display of table  */}
                     <td className="py-3 px-4">
                       <div className="flex gap-2">
+                        {/* Trash Row data  */}
                         {isTrashView ? (
                           <>
                             <button
-                              className="p-2 bg-green-500 text-white rounded hover:bg-green-600"
+                              className="p-2 bg-green-500 text-white rounded hover:bg-green-600 cursor-pointer"
                               onClick={() => handleRestore(todo._id)}
                             >
                               <FaTrashRestore size={14} />
                             </button>
                             <button
-                              className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
+                              className="p-2 bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer"
                               onClick={() =>
                                 openConfirm("Permanently delete?", () =>
                                   permanentDeleteTask(todo._id)
@@ -221,20 +231,20 @@ const Table = ({
                           <>
                             {todo.status !== "completed" && (
                               <button
-                                className="p-2 bg-green-500 text-white rounded hover:bg-green-600"
-                                onClick={() => handleComplete(todo._id)}
+                                className="p-2 bg-green-500 text-white rounded hover:bg-green-600 cursor-pointer cursor-pointer"
+                                onClick={() => completeTask(todo._id)}
                               >
                                 <FaCheck size={14} />
                               </button>
                             )}
                             <button
-                              className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                              className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer"
                               onClick={() => onEdit(todo)}
                             >
                               <FaEdit size={14} />
                             </button>
                             <button
-                              className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
+                              className="p-2 bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer"
                               onClick={() =>
                                 openConfirm("Move to Trash?", () =>
                                   handleDelete(todo._id)
@@ -260,28 +270,32 @@ const Table = ({
           </table>
 
           {/* Pagination */}
-          {/* Pagination */}
-          <div className="flex justify-center items-center gap-4 mt-4">
-            <button
-              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300"
-              disabled={page <= 1}
-              onClick={() => setPage(page - 1)}
-            >
-              Previous
-            </button>
 
-            <span className="text-gray-700 font-medium">
-              Page {page} of {computedTotalPages || 1}
-            </span>
+          {paginatedTodos.length > 0 ? (
+            <div className="flex justify-center items-center gap-4 mt-4">
+              <button
+                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300"
+                disabled={page <= 1}
+                onClick={() => setPage(page - 1)}
+              >
+                Previous
+              </button>
 
-            <button
-              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300"
-              disabled={page >= computedTotalPages}
-              onClick={() => setPage(page + 1)}
-            >
-              Next
-            </button>
-          </div>
+              <span className="text-gray-700 font-medium">
+                Page {page} of {computedTotalPages || 1}
+              </span>
+
+              <button
+                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300"
+                disabled={page >= computedTotalPages}
+                onClick={() => setPage(page + 1)}
+              >
+                Next
+              </button>
+            </div>
+          ) : (
+            " "
+          )}
         </div>
       </div>
     </main>
