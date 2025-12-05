@@ -3,13 +3,14 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import InputField from "../Common/InputeField";
 import { toast } from "react-toastify";
-import apiClient from "../../api/apiClient";
 
-const AddTodo = ({ onTodoAdded }) => {
+const AddTodo = ({ onTodoAdded, onTodoUpdated, initialData, closeModal }) => {
+  const isEdit = Boolean(initialData && initialData._id);
+
   const initialValues = {
-    task: "",
-    description: "",
-    priority: "medium",
+    task: initialData?.task || "",
+    description: initialData?.description || "",
+    priority: initialData?.priority || "medium",
   };
 
   const validationSchema = Yup.object({
@@ -17,44 +18,50 @@ const AddTodo = ({ onTodoAdded }) => {
     description: Yup.string().required("Description is required"),
     priority: Yup.string().oneOf(["low", "medium", "high"]).required(),
   });
-
   const handleSubmit = async (values, { resetForm, setSubmitting }) => {
-    setSubmitting(true);
     try {
-      const response = await apiClient.post("/create-todo", {
-        task: values.task,
-        description: values.description,
-        priority: values.priority,
-      });
-
-      if (response.data.success) {
-        toast.success(response.data.message);
-        resetForm();
-        if (onTodoAdded) onTodoAdded();
+      if (isEdit) {
+        await onTodoUpdated(initialData._id, values);
+        toast.success("Task updated successfully");
       } else {
-        toast.error(response.data.message);
+        await onTodoAdded(values);
+        toast.success("Task added successfully");
       }
+      resetForm();
+      if (closeModal) closeModal();
     } catch (error) {
-      if (error.response?.status === 401) {
-        // Session expired or token invalid
-        toast.error("Session expired. Please login again.");
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        window.location.href = "/login";
-      } else {
-        toast.error(error.response?.data?.message || "Server error");
-      }
+      toast.error("Operation failed, please try again");
     } finally {
       setSubmitting(false);
     }
   };
 
+  // const handleSubmit = async (values, { resetForm, setSubmitting }) => {
+  //   try {
+  //     if (isEdit) {
+  //       await onTodoUpdated(initialData._id, values);
+  //       toast.success("Task updated successfully");
+  //     } else {
+  //       await onTodoAdded(values);
+  //       toast.success("Task added successfully");
+  //     }
+  //     resetForm();
+  //     if (closeModal) closeModal();
+  //   } catch (error) {
+  //     toast.error("Operation failed, please try again");
+  //   } finally {
+  //     setSubmitting(false);
+  //   }
+  // };
+
   return (
     <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md mx-auto">
-      <h2 className="text-xl font-bold mb-4">Add New Task</h2>
-
+      <h2 className="text-xl font-bold mb-4">
+        {isEdit ? "Update Task" : "Add New Task"}
+      </h2>
       <Formik
         initialValues={initialValues}
+        enableReinitialize
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
@@ -64,7 +71,7 @@ const AddTodo = ({ onTodoAdded }) => {
             <InputField
               name="description"
               label="Description"
-              placeholder="Enter task description"
+              placeholder="Enter description"
             />
             <div>
               <label className="font-bold">Priority:</label>
@@ -78,13 +85,18 @@ const AddTodo = ({ onTodoAdded }) => {
                 <option value="high">High</option>
               </Field>
             </div>
-
             <button
               type="submit"
               disabled={isSubmitting}
               className="bg-gray-800 w-full text-white px-4 py-3 rounded-lg hover:bg-gray-600 transition cursor-pointer"
             >
-              {isSubmitting ? "Adding..." : "Add Task"}
+              {isSubmitting
+                ? isEdit
+                  ? "Updating..."
+                  : "Adding..."
+                : isEdit
+                ? "Update Task"
+                : "Add Task"}
             </button>
           </Form>
         )}
