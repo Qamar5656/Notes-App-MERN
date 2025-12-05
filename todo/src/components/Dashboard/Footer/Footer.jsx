@@ -4,7 +4,7 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-100 py-4 mt-auto shadow-inner">
+    <footer className="bg-white py-4 mt-auto shadow-inner">
       <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center text-gray-600 text-sm">
         {/* Left side: Links */}
         <div className="flex gap-4 mb-2 sm:mb-0">
