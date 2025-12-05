@@ -10,7 +10,7 @@ import {
   FaTrash,
   FaArrowRight,
 } from "react-icons/fa";
-import { FiCheckSquare, FiLogOut, FiMenu } from "react-icons/fi";
+import { FiCheckSquare, FiLogOut } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({ selectedItem, setSelectedItem, handleLogout, stats }) => {
@@ -38,11 +38,17 @@ const Sidebar = ({ selectedItem, setSelectedItem, handleLogout, stats }) => {
     setSelectedItem(itemName);
   };
 
-  const renderButton = (icon, label, itemName, badgeCount = null) => (
+  const renderButton = (
+    icon,
+    label,
+    itemName,
+    badgeCount = null,
+    className
+  ) => (
     <button
       className={`flex items-center ${
         isOpen ? "justify-between" : "justify-center"
-      } w-full px-4 py-3 rounded hover:bg-gray-300 transition-all duration-200 ${
+      } w-full px-4 py-3 rounded hover:bg-gray-300 transition-all duration-200 cursor-pointer ${
         selectedItem === itemName ? "bg-gray-300" : ""
       }`}
       onClick={() => handleItemClick(itemName)}
@@ -67,7 +73,7 @@ const Sidebar = ({ selectedItem, setSelectedItem, handleLogout, stats }) => {
     >
       {/* Logo & Hamburger */}
       <div
-        className={`flex items-center px-4 py-4 border-b border-gray-300 ${
+        className={`flex items-center px-4 py-4 border-b border-gray-300 cursor-pointer ${
           isOpen ? "justify-start" : "justify-center"
         }`}
       >
@@ -106,7 +112,7 @@ const Sidebar = ({ selectedItem, setSelectedItem, handleLogout, stats }) => {
       </div>
 
       {/* Scrollable Menu */}
-      <div className="flex-1 px-2 py-4 space-y-1 overflow-auto">
+      <div className="flex-1 px-2 py-4 space-y-1 overflow-auto ">
         {/* All Tasks */}
         {renderButton(
           <FaTasks size={20} className="text-gray-700" />,
@@ -117,14 +123,14 @@ const Sidebar = ({ selectedItem, setSelectedItem, handleLogout, stats }) => {
         {/* Priority Section */}
         <div>
           <button
-            className={`flex items-center ${
+            className={`flex items-center cursor-pointer ${
               isOpen ? "justify-between" : "justify-center"
             } w-full px-4 py-3 rounded hover:bg-gray-300 transition-all duration-200`}
             onClick={() => setOpenPriority(!openPriority)}
           >
             <div className="flex items-center gap-3">
               <FaFlag size={20} className="text-purple-600" />
-              {isOpen && <span className="font-medium">Priority</span>}
+              {isOpen && <span className="font-medium ">Priority</span>}
             </div>
             {isOpen && (
               <span>{openPriority ? <FaArrowUp /> : <FaArrowDown />}</span>
@@ -157,7 +163,7 @@ const Sidebar = ({ selectedItem, setSelectedItem, handleLogout, stats }) => {
 
         {/* Completed */}
         {renderButton(
-          <FaCheckCircle size={20} className="text-green-600" />,
+          <FaCheckCircle size={20} className="text-green-600 cursor-pointer" />,
           "Completed",
           "Completed",
           stats?.completed || null
@@ -165,7 +171,7 @@ const Sidebar = ({ selectedItem, setSelectedItem, handleLogout, stats }) => {
 
         {/* Trash */}
         {renderButton(
-          <FaTrash size={20} className="text-red-600" />,
+          <FaTrash size={20} className="text-red-600 cursor-pointer" />,
           "Trash",
           "Trash",
           stats?.deleted || null
@@ -175,7 +181,7 @@ const Sidebar = ({ selectedItem, setSelectedItem, handleLogout, stats }) => {
       {/* Logout at Bottom */}
       <div className="px-2 py-4 border-t border-gray-300">
         <button
-          className={`flex items-center ${
+          className={`flex items-center cursor-pointer ${
             isOpen ? "justify-start" : "justify-center"
           } w-full px-4 py-3 rounded hover:bg-red-100 hover:text-red-700 transition-all duration-200 text-red-600`}
           onClick={handleLogout}
