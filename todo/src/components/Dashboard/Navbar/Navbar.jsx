@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from "react";
+import { FaTasks, FaCheckCircle, FaTrash, FaFlag } from "react-icons/fa";
 import { FiCheckSquare } from "react-icons/fi";
 import Button from "../../Button/Button";
 import AddTodo from "../../Todos/AddTodo";
+import { TbNotes } from "react-icons/tb";
+
+// Map sidebar items to icons
+const ICON_MAP = {
+  "All Tasks": <FaTasks size={24} className="text-gray-700" />,
+  Completed: <FaCheckCircle size={24} className="text-green-600" />,
+  Trash: <FaTrash size={24} className="text-red-600" />,
+  Priority: <FaFlag size={24} className="text-purple-600" />,
+};
 
 const Navbar = ({
   selectedItem,
@@ -14,17 +24,23 @@ const Navbar = ({
 }) => {
   const [isAddModalOpen, setAddModalOpen] = useState(false);
 
-  // Open modal when editTodo changes
   useEffect(() => {
     if (editTodo) setAddModalOpen(true);
   }, [editTodo]);
 
+  // Determine icon to show
+  const getSelectedIcon = () => {
+    if (!selectedItem) return <TbNotes size={24} />;
+    if (selectedItem.startsWith("Priority: ")) return ICON_MAP.Priority;
+    return ICON_MAP[selectedItem] || <TbNotes size={24} />;
+  };
+
   return (
     <nav className="bg-white shadow-md py-4 relative">
       <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
-        {/* Left: Dashboard title */}
+        {/* Left: Icon + Dashboard title */}
         <div className="flex items-center gap-2 text-gray-800 font-semibold text-lg">
-          <FiCheckSquare size={24} />
+          {getSelectedIcon()}
           <span className="text-2xl">{selectedItem || "Dashboard"}</span>
         </div>
 
@@ -33,11 +49,21 @@ const Navbar = ({
           <input
             type="text"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              searchTodos(e.target.value);
+            }}
             placeholder="Search tasks..."
             className="w-1/2 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
+        {/* <input
+    type="text"
+    value={searchQuery}
+    onChange={(e) => setSearchQuery(e.target.value)}
+    placeholder="Search tasks..."
+    className="w-1/2 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+  /> */}
 
         {/* Right: Add Task */}
         <div className="flex items-center gap-3">
