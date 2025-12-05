@@ -8,6 +8,7 @@ import {
   FaTasks,
   FaCheckCircle,
   FaTrash,
+  FaArrowRight,
 } from "react-icons/fa";
 import { FiCheckSquare, FiLogOut, FiMenu } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +19,7 @@ const Sidebar = ({ selectedItem, setSelectedItem, handleLogout, stats }) => {
   const [openPriority, setOpenPriority] = useState(false);
   const [user, setUser] = useState(null);
 
-  // Get loggedin user details
+  // Get logged-in user details
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (stored) setUser(JSON.parse(stored));
@@ -26,7 +27,6 @@ const Sidebar = ({ selectedItem, setSelectedItem, handleLogout, stats }) => {
 
   if (!user) return <p>Loading user...</p>;
 
-  // Function to handle menu item clicks
   const handleItemClick = (itemName) => {
     if (itemName === "Tasks") navigate("/dashboard/tasks");
     if (itemName.startsWith("Priority: ")) {
@@ -38,7 +38,6 @@ const Sidebar = ({ selectedItem, setSelectedItem, handleLogout, stats }) => {
     setSelectedItem(itemName);
   };
 
-  // Render menu button with optional badge
   const renderButton = (icon, label, itemName, badgeCount = null) => (
     <button
       className={`flex items-center ${
@@ -62,32 +61,31 @@ const Sidebar = ({ selectedItem, setSelectedItem, handleLogout, stats }) => {
 
   return (
     <div
-      className={`text-gray-800 h-screen transition-all duration-300 ${
-        isOpen ? "w-72" : "w-20"
+      className={`text-gray-800 h-screen transition-all duration-300 relative ${
+        isOpen ? "w-72" : "w-24 px-5"
       } flex flex-col bg-white border-r border-gray-200`}
     >
       {/* Logo & Hamburger */}
       <div
         className={`flex items-center px-4 py-4 border-b border-gray-300 ${
-          isOpen ? "justify-between" : "justify-center"
+          isOpen ? "justify-start" : "justify-center"
         }`}
       >
-        {/* Logo */}
+        <FiCheckSquare size={56} className="text-gray-700" />
         {isOpen && (
-          <div className="flex items-center gap-2">
-            <FiCheckSquare size={56} className="text-gray-700" />
+          <div className="flex items-center gap-2 ml-2">
             <span className="text-xl font-bold text-gray-900">NotePlus</span>
           </div>
         )}
-
-        {/* Menu Toggle */}
-        <button
-          className="focus:outline-none cursor-pointer text-gray-600 hover:text-gray-900"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? <FaArrowLeft size={20} /> : <FiMenu size={20} />}
-        </button>
       </div>
+
+      {/* Arrow toggle at edge */}
+      <button
+        className="absolute top-6 -right-4 z-10 bg-white border border-gray-300 rounded-full p-2 shadow-md cursor-pointer hover:bg-gray-100 transition-all"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {isOpen ? <FaArrowLeft size={16} /> : <FaArrowRight size={16} />}
+      </button>
 
       {/* User Info */}
       <div
@@ -107,14 +105,13 @@ const Sidebar = ({ selectedItem, setSelectedItem, handleLogout, stats }) => {
         )}
       </div>
 
-      {/* Menu */}
+      {/* Scrollable Menu */}
       <div className="flex-1 px-2 py-4 space-y-1 overflow-auto">
         {/* All Tasks */}
         {renderButton(
           <FaTasks size={20} className="text-gray-700" />,
           "All Tasks",
-          "Tasks",
-          stats ? stats.pending + stats.completed : null
+          "Tasks"
         )}
 
         {/* Priority Section */}
@@ -158,8 +155,6 @@ const Sidebar = ({ selectedItem, setSelectedItem, handleLogout, stats }) => {
           )}
         </div>
 
-        {/* Notebook Section */}
-
         {/* Completed */}
         {renderButton(
           <FaCheckCircle size={20} className="text-green-600" />,
@@ -175,8 +170,10 @@ const Sidebar = ({ selectedItem, setSelectedItem, handleLogout, stats }) => {
           "Trash",
           stats?.deleted || null
         )}
+      </div>
 
-        {/* Logout */}
+      {/* Logout at Bottom */}
+      <div className="px-2 py-4 border-t border-gray-300">
         <button
           className={`flex items-center ${
             isOpen ? "justify-start" : "justify-center"
@@ -192,54 +189,3 @@ const Sidebar = ({ selectedItem, setSelectedItem, handleLogout, stats }) => {
 };
 
 export default Sidebar;
-
-{
-  /* <div>
-          <button
-            className={`flex items-center ${
-              isOpen ? "justify-between" : "justify-center"
-            } w-full px-4 py-3 rounded hover:bg-gray-300 transition-all duration-200`}
-            onClick={() => setOpenNotebook(!openNotebook)}
-          >
-            <div className="flex items-center gap-3">
-              <FaFolder size={20} className="text-orange-600" />
-              {isOpen && <span className="font-medium">Notebook</span>}
-            </div>
-            {isOpen && (
-              <span>{openNotebook ? <FaArrowUp /> : <FaArrowDown />}</span>
-            )}
-          </button>
-
-          {openNotebook && isOpen && (
-            <div className="ml-8 mt-1 mb-2 flex flex-col gap-1">
-              {[
-                {
-                  name: "Project Plan",
-                  icon: <FaFolder size={14} className="text-orange-500" />,
-                },
-                {
-                  name: "Routing Notes",
-                  icon: <FaFolder size={14} className="text-blue-500" />,
-                },
-                {
-                  name: "Planning",
-                  icon: <FaFolder size={14} className="text-green-500" />,
-                },
-              ].map((subItem) => (
-                <button
-                  key={subItem.name}
-                  className={`flex items-center gap-2 px-3 py-2 rounded transition-all duration-200 text-sm cursor-pointer ${
-                    selectedItem === `Notebook > ${subItem.name}`
-                      ? "bg-gray-300 font-medium"
-                      : "hover:bg-gray-200"
-                  }`}
-                  onClick={() => handleItemClick(`Notebook > ${subItem.name}`)}
-                >
-                  {subItem.icon}
-                  <span>{subItem.name}</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div> */
-}
