@@ -9,11 +9,4 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
-transporter.verify((success, error) => {
-  if (success) {
-    console.log("Mailer is ready to send mails");
-  } else {
-    console.log("Mailer is facing errors while sending mails");
-  }
-});
 export default transporter;
