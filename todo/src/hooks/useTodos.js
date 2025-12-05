@@ -24,6 +24,7 @@ export const useTodos = (initialFilter = "") => {
     return filter;
   };
 
+  //Load Todos api call
   const loadTodos = useCallback(async () => {
     try {
       setLoading(true);
@@ -42,8 +43,8 @@ export const useTodos = (initialFilter = "") => {
       const data = await todoService.fetchTodos(params);
 
       // THIS IS WHERE pagination data is set
-      setTodos(data.todos || []); // <-- update todos for current page
-      setTotalPages(data.totalPages || 1); // <-- set total pages returned by backend
+      setTodos(data.todos || []); //  update todos for current page
+      setTotalPages(data.totalPages || 1); // set total pages returned by backend
     } catch (error) {
       console.error("Failed to load todos", error);
       toast.error("Failed to load todos");
@@ -51,67 +52,6 @@ export const useTodos = (initialFilter = "") => {
       setLoading(false);
     }
   }, [filter, page, limit]);
-
-  // const loadTodos = useCallback(async () => {
-  //   try {
-  //     setLoading(true);
-
-  //     const params = {
-  //       page,
-  //       limit,
-  //     };
-
-  //     if (filter === "Tasks") params.status = "pending";
-  //     else if (filter === "Completed") params.status = "completed";
-  //     else if (filter === "Trash") params.status = "deleted";
-  //     else if (filter.startsWith("Priority: ")) {
-  //       params.priority = filter.split(": ")[1].toLowerCase();
-  //       params.status = "pending";
-  //     }
-
-  //     const data = await todoService.fetchTodos(params);
-
-  //     setTodos(data.todos);
-  //     setTotalPages(data.totalPages || 1);
-  //   } catch (error) {
-  //     console.error("Failed to load todos", error);
-  //     toast.error("Failed to load todos");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }, [filter, page]);
-
-  // const loadTodos = useCallback(async () => {
-  //   try {
-  //     setLoading(true);
-
-  //     // query params
-  //     const params = {
-  //       page,
-  //       limit,
-  //       // search: searchQuery || "",
-  //     };
-
-  //     // Add filter mapping
-  //     if (filter === "Tasks") params.status = "pending";
-  //     else if (filter === "Completed") params.status = "completed";
-  //     else if (filter === "Trash") params.status = "deleted";
-  //     else if (filter.startsWith("Priority: ")) {
-  //       params.priority = filter.split(": ")[1].toLowerCase();
-  //       params.status = "pending"; // not deleted
-  //     }
-
-  //     const data = await todoService.fetchTodos(params);
-
-  //     setTodos(data.todos);
-  //     setTotalPages(data.totalPages || 1); // backend returning totalPages
-  //   } catch (error) {
-  //     toast.error("Failed to fetch todos");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }, [filter, page]);
-  // }, [filter, page, searchQuery]);
 
   const loadStats = useCallback(async () => {
     try {
@@ -127,47 +67,7 @@ export const useTodos = (initialFilter = "") => {
     loadStats();
   };
 
-  // Optimistic add
-  // const addTodoOptimistic = async (newTodo) => {
-  //   if (!newTodo.task || !newTodo.description || !newTodo.priority) return;
-
-  //   const tempId = Date.now();
-  //   const optimisticTodo = {
-  //     ...newTodo,
-  //     _id: tempId,
-  //     status: "pending",
-  //     createdAt: new Date(),
-  //   };
-
-  //   // Add temp todo
-  //   // setTodos((prev) => [optimisticTodo, ...prev]);
-  //   setTodos((prev) => [optimisticTodo, ...(prev || [])]);
-
-  //   try {
-  //     const response = await todoService.createTodo(newTodo);
-  //     const savedTodo = response.data?.data;
-
-  //     if (!savedTodo) throw new Error("Invalid server response");
-
-  //     // Replace temp todo
-  //     // setTodos((prev) => [
-  //     //   savedTodo,
-  //     //   ...prev.filter((todo) => todo._id !== tempId),
-  //     // ]);
-  //     setTodos((prev) => [
-  //       savedTodo,
-  //       ...(prev || []).filter((todo) => todo._id !== tempId),
-  //     ]);
-
-  //     // Only one success toast here
-  //     // toast.success("Task added successfully");
-  //   } catch (error) {
-  //     setTodos((prev) => (prev || []).filter((todo) => todo._id !== tempId));
-  //     toast.error(error.response?.data?.message || "Failed to add task");
-  //   }
-  //   // setTodos((prev) => prev.filter((todo) => todo._id !== tempId));
-  // };
-
+  //Add task
   const addTodoOptimistic = async (newTodo) => {
     if (!newTodo.task || !newTodo.description || !newTodo.priority) return;
 
@@ -246,18 +146,7 @@ export const useTodos = (initialFilter = "") => {
     }
   };
 
-  // const updateTask = async (id, updatedData) => {
-  //   try {
-  //     await todoService.updateTodo(id, updatedData);
-  //     setTodos((prev) =>
-  //       prev.map((todo) =>
-  //         todo._id === id ? { ...todo, ...updatedData } : todo
-  //       )
-  //     );
-  //   } catch (error) {
-  //     toast.error("Unable to update task");
-  //   }
-  // };
+  //Update api call
   const updateTask = async (id, updatedData) => {
     try {
       await todoService.updateTodo(id, updatedData);
