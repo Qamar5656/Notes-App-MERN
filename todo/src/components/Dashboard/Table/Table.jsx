@@ -160,8 +160,13 @@ const Table = ({
                   >
                     <td className="py-7 px-4 font-medium">{todo.task}</td>
                     <td className="py-7 px-4 text-gray-600">
-                      {todo.description}
+                      <span title={todo.description}>
+                        {todo.description.length > 50
+                          ? todo.description.slice(0, 50) + "..."
+                          : todo.description}
+                      </span>
                     </td>
+
                     <td className="py-7 px-4">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-medium ${
