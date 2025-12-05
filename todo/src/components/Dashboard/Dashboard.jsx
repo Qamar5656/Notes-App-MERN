@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar/Navbar";
 import Sidebar from "./Sidebar/Sidebar";
 import Footer from "./Footer/Footer";
@@ -10,8 +10,11 @@ const Dashboard = () => {
   const {
     todos,
     stats,
+    page,
+    totalPages,
     loading,
     addTodoOptimistic,
+    setPage,
     completeTask,
     deleteTask,
     restoreTask,
@@ -21,13 +24,10 @@ const Dashboard = () => {
   } = useTodos();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredTodos, setFilteredTodos] = useState([]);
   const [prefillTodo, setPrefillTodo] = useState(null);
-
-  const { section } = useParams();
-  const navigate = useNavigate();
-  const [user, setUser] = useState(null);
   const [selectedItem, setSelectedItem] = useState("Tasks");
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   // Load user from localStorage
   useEffect(() => {
@@ -39,23 +39,6 @@ const Dashboard = () => {
   useEffect(() => {
     setFilter(selectedItem);
   }, [selectedItem, setFilter]);
-
-  // Filter todos based on search
-  useEffect(() => {
-    if (!todos) return;
-
-    setFilteredTodos(
-      todos.filter((todo) => {
-        const task = todo.task || "";
-        const desc = todo.description || "";
-        const query = searchQuery.toLowerCase();
-        return (
-          task.toLowerCase().includes(query) ||
-          desc.toLowerCase().includes(query)
-        );
-      })
-    );
-  }, [searchQuery, todos]);
 
   const handleTaskAdded = (todo) => addTodoOptimistic(todo);
 
@@ -86,13 +69,36 @@ const Dashboard = () => {
           setEditTodo={setPrefillTodo}
         />
 
-        <Table
-          todos={filteredTodos}
+        {/* <Table
+          todos={todos} // pass full todos
           loading={loading}
           deleteTask={deleteTask}
           restoreTask={restoreTask}
           permanentDeleteTask={permanentDeleteTask}
           completeTask={completeTask}
+          addTodoOptimistic={addTodoOptimistic}
+          searchQuery={searchQuery}
+          updateTask={updateTask}
+          filter={selectedItem}
+          onEdit={(todo) => setPrefillTodo(todo)}
+          /> */}
+
+        <Table
+          todos={todos}
+          loading={loading}
+          deleteTask={deleteTask}
+          restoreTask={restoreTask}
+          permanentDeleteTask={permanentDeleteTask}
+          completeTask={completeTask}
+          updateTask={updateTask}
+          addTodoOptimistic={addTodoOptimistic}
+          // filter={filter}
+          filter={selectedItem}
+          searchQuery={searchQuery}
+          page={page}
+          limit={10}
+          setPage={setPage}
+          totalPages={totalPages}
           onEdit={(todo) => setPrefillTodo(todo)}
         />
 
