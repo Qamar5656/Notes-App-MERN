@@ -69,20 +69,6 @@ const Dashboard = () => {
           setEditTodo={setPrefillTodo}
         />
 
-        {/* <Table
-          todos={todos} // pass full todos
-          loading={loading}
-          deleteTask={deleteTask}
-          restoreTask={restoreTask}
-          permanentDeleteTask={permanentDeleteTask}
-          completeTask={completeTask}
-          addTodoOptimistic={addTodoOptimistic}
-          searchQuery={searchQuery}
-          updateTask={updateTask}
-          filter={selectedItem}
-          onEdit={(todo) => setPrefillTodo(todo)}
-          /> */}
-
         <Table
           todos={todos}
           loading={loading}
