@@ -10,15 +10,12 @@ const Table = ({
   filter = "",
   searchQuery = "",
   page,
-  totalPages,
   setPage,
   loading = false,
   deleteTask,
   restoreTask,
   permanentDeleteTask,
   completeTask,
-  updateTask,
-  addTodoOptimistic,
   onEdit,
 }) => {
   const { openConfirm } = useModal();
@@ -76,16 +73,6 @@ const Table = ({
       updateOptimistic({ type: "rollback" });
     }
   };
-
-  // const handleComplete = async (id) => {
-  //   updateOptimistic({ type: "update", id, data: { status: "completed" } });
-  //   try {
-  //     await completeTask(id);
-  //   } catch {
-  //     toast.error("Failed to complete task");
-  //     updateOptimistic({ type: "rollback" });
-  //   }
-  // };
 
   // Filter + Search (only on current page)
   const filteredTodos = optimisticTodos.filter((todo) => {
@@ -270,8 +257,6 @@ const Table = ({
           </table>
 
           {/* Pagination */}
-
-          {/* {paginatedTodos.length > 9 ? ( */}
           {computedTotalPages > 1 ? (
             <div className="flex justify-center items-center gap-4 mt-4">
               <button
