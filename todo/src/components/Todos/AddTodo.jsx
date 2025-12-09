@@ -36,24 +36,6 @@ const AddTodo = ({ onTodoAdded, onTodoUpdated, initialData, closeModal }) => {
     }
   };
 
-  // const handleSubmit = async (values, { resetForm, setSubmitting }) => {
-  //   try {
-  //     if (isEdit) {
-  //       await onTodoUpdated(initialData._id, values);
-  //       toast.success("Task updated successfully");
-  //     } else {
-  //       await onTodoAdded(values);
-  //       toast.success("Task added successfully");
-  //     }
-  //     resetForm();
-  //     if (closeModal) closeModal();
-  //   } catch (error) {
-  //     toast.error("Operation failed, please try again");
-  //   } finally {
-  //     setSubmitting(false);
-  //   }
-  // };
-
   return (
     <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md mx-auto">
       <h2 className="text-xl font-bold mb-4">
