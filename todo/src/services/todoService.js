@@ -7,7 +7,7 @@ export const fetchTodos = async (params = {}) => {
   const res = await apiClient.get(
     `/todos${queryString ? `?${queryString}` : ""}`
   );
-  return res.data; // return full data: { todos, filters }
+  return res.data; // return full data
 };
 
 // Fetch todo stats for sidebar counters
