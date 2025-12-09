@@ -41,7 +41,9 @@ const Navbar = ({
         {/* Left: Icon + Dashboard title */}
         <div className="flex items-center gap-2 text-gray-800 font-semibold text-lg">
           {getSelectedIcon()}
-          <span className="text-2xl">{selectedItem || "Dashboard"}</span>
+          <span className="text-2xl hidden sm:flex">
+            {selectedItem || "Dashboard"}
+          </span>
         </div>
 
         {/* Center: Search box */}
@@ -57,13 +59,6 @@ const Navbar = ({
             className="w-1/2 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
-        {/* <input
-    type="text"
-    value={searchQuery}
-    onChange={(e) => setSearchQuery(e.target.value)}
-    placeholder="Search tasks..."
-    className="w-1/2 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-  /> */}
 
         {/* Right: Add Task */}
         <div className="flex items-center gap-3">
