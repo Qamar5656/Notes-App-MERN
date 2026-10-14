@@ -5,12 +5,12 @@ import jwt from "jsonwebtoken";
 import generateOTP from "../utils/otpGenerator.js";
 import transporter from "../utils/mailer.js";
 
+console.log('user controller loaded ');
 // Create user in database
 export const createUser = async (req, res) => {
   try {
     const { firstName, lastName, email, password, role } = req.body;
     const profileImage = req.file?.filename;
-
     // Check required fields
     if (
       !firstName ||

@@ -16,7 +16,7 @@ import { authenticateUser } from "../middleware/AuthMiddleware.js";
 import { authorizeRoles } from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
-
+console.log('routes file loaded ');
 //Routes
 router.post("/register", upload.single("profileImage"), createUser);
 router.post("/signin", SignInUser);

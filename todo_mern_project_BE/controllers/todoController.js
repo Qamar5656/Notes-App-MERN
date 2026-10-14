@@ -1,9 +1,13 @@
 import Todo from "../models/todoModel.js";
 
+console.log('todo controler loaded ')
+
 // CREATE TODO
 export const createTodo = async (req, res) => {
   try {
     const { task, priority, description, notebook } = req.body;
+
+    console.log('create todo message ');
 
     if (!task || !priority || !description) {
       return res.status(400).json({
